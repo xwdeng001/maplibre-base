@@ -31,19 +31,19 @@ const cities = computed(() => REGIONS.cities)
 /** 县区列表 */
 const counties = computed(() => {
   if (!selectedCity.value) return []
-  return (REGIONS.counties as Record<string, string[]>)[selectedCity.value] || []
+  return ((REGIONS.counties as unknown) as Record<string, string[]>)[selectedCity.value] || []
 })
 
 /** 乡镇列表 */
 const towns = computed(() => {
   if (!selectedCounty.value) return []
-  return (REGIONS.towns as Record<string, string[]>)[selectedCounty.value] || []
+  return ((REGIONS.towns as unknown) as Record<string, string[]>)[selectedCounty.value] || []
 })
 
 /** 村列表 */
 const villages = computed(() => {
   if (!selectedTown.value) return []
-  return (REGIONS.villages as Record<string, string[]>)[selectedTown.value] || []
+  return ((REGIONS.villages as unknown) as Record<string, string[]>)[selectedTown.value] || []
 })
 
 /** 当前选中的指标配置 */

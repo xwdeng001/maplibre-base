@@ -22,8 +22,10 @@ html, body {
   height: 100%;
 }
 
-.ant-layout-content {
-  overflow: auto;
+.ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 /* MapLibre 弹窗样式覆盖 */

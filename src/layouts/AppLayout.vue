@@ -2,17 +2,18 @@
 import { ref, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
-  LayoutOutlined,
   GlobalOutlined,
-  HeatMapOutlined,
-  DotChartOutlined,
-  EnvironmentOutlined,
-  AimOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   GithubOutlined,
   SettingOutlined,
-  ExperimentOutlined
+  ReadOutlined,
+  RocketOutlined,
+  CompassOutlined,
+  ControlOutlined,
+  InfoCircleOutlined,
+  ExperimentOutlined,
+  HeatMapOutlined
 } from '@ant-design/icons-vue'
 
 const router = useRouter()
@@ -24,8 +25,21 @@ const collapsed = ref(false)
 /** 当前选中的菜单项 */
 const selectedKeys = ref<string[]>([route.path])
 
+/** 子菜单 key 列表，用于自动展开匹配的父菜单 */
+const subMenuKeys = ['/stage1', '/stage2', '/stage3', '/stage4', '/stage5', '/stage6', '/stage7', '/stage8']
+
+/** 根据路径推断所属的父菜单 key */
+function getParentMenuKey(path: string): string {
+  for (const key of subMenuKeys) {
+    if (path === key || path.startsWith(key + '/')) {
+      return key
+    }
+  }
+  return ''
+}
+
 /** 当前展开的子菜单 */
-const openKeys = ref<string[]>([])
+const openKeys = ref<string[]>([getParentMenuKey(route.path)])
 
 /** 面包屑导航 */
 const breadcrumbs = computed(() => {
@@ -36,19 +50,28 @@ const breadcrumbs = computed(() => {
   }))
 })
 
-/** 监听路由变化，同步菜单选中状态 */
+/** 监听路由变化，同步菜单选中状态，只展开当前路由对应的父菜单（手风琴模式） */
 watch(
   () => route.path,
   (path) => {
     selectedKeys.value = [path]
-    /** 自动展开父级菜单 */
-    const parent = route.matched.find(r => r.children && r.children.length > 0)
-    if (parent && parent.path) {
-      openKeys.value = [parent.path]
+    const parentKey = getParentMenuKey(path)
+    if (parentKey) {
+      openKeys.value = [parentKey]
     }
   },
   { immediate: true }
 )
+
+/** 手风琴模式：同一时间只展开一个子菜单 */
+function handleOpenChange(keys: string[]) {
+  const latestKey = keys.find(k => !openKeys.value.includes(k))
+  if (latestKey && subMenuKeys.includes(latestKey)) {
+    openKeys.value = [latestKey]
+  } else {
+    openKeys.value = keys.filter(k => subMenuKeys.includes(k))
+  }
+}
 
 /** 菜单点击跳转 */
 function handleMenuClick({ key }: { key: string }) {
@@ -59,14 +82,8 @@ function handleMenuClick({ key }: { key: string }) {
 <template>
   <a-layout class="app-layout">
     <!-- 左侧边栏 -->
-    <a-layout-sider
-      v-model:collapsed="collapsed"
-      :trigger="null"
-      collapsible
-      :width="220"
-      :collapsed-width="64"
-      class="app-sider"
-    >
+    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible :width="220" :collapsed-width="64"
+      class="app-sider">
       <!-- Logo 区域 -->
       <div class="sider-logo">
         <GlobalOutlined class="logo-icon" />
@@ -74,40 +91,51 @@ function handleMenuClick({ key }: { key: string }) {
       </div>
 
       <!-- 菜单 -->
-      <a-menu
-        v-model:selectedKeys="selectedKeys"
-        v-model:openKeys="openKeys"
-        theme="dark"
-        mode="inline"
-        @click="handleMenuClick"
-      >
-        <!-- 土壤检测分析 -->
-        <a-sub-menu key="/soil">
-          <template #icon><ExperimentOutlined /></template>
-          <template #title>土壤检测分析</template>
-          <a-menu-item key="/soil-ph">
-            <template #icon><HeatMapOutlined /></template>
-            土壤pH分布图
+      <a-menu v-model:selectedKeys="selectedKeys" :openKeys="openKeys" theme="dark" mode="inline"
+        @click="handleMenuClick" @openChange="handleOpenChange">
+        <!-- 第一阶段：入门基础 -->
+        <a-sub-menu key="/stage1">
+          <template #icon>
+            <ReadOutlined />
+          </template>
+          <template #title>一、入门基础</template>
+          <a-menu-item key="/stage1/lesson01">
+            <template #icon>
+              <InfoCircleOutlined />
+            </template>
+            01.认识MapLibre
+          </a-menu-item>
+          <a-menu-item key="/stage1/lesson02">
+            <template #icon>
+              <RocketOutlined />
+            </template>
+            02.第一张地图
+          </a-menu-item>
+          <a-menu-item key="/stage1/lesson03">
+            <template #icon>
+              <CompassOutlined />
+            </template>
+            03.地图基础操作
+          </a-menu-item>
+          <a-menu-item key="/stage1/lesson04">
+            <template #icon>
+              <ControlOutlined />
+            </template>
+            04.地图控件
           </a-menu-item>
         </a-sub-menu>
 
-        <!-- 地图可视化 -->
-        <a-sub-menu key="/bindmap">
-          <template #icon><EnvironmentOutlined /></template>
-          <template #title>地图可视化</template>
-          <a-menu-item key="/bindmap/bindmap1">
-            <template #icon><DotChartOutlined /></template>
-            地图基础展示
-          </a-menu-item>
-        </a-sub-menu>
-
-        <!-- 地图工具 -->
-        <a-sub-menu key="/bindtools">
-          <template #icon><AimOutlined /></template>
-          <template #title>地图工具</template>
-          <a-menu-item key="/bindtools/bindtool1">
-            <template #icon><LayoutOutlined /></template>
-            标注与测量
+        <!-- 第八阶段：实战项目（已有） -->
+        <a-sub-menu key="/stage8">
+          <template #icon>
+            <ExperimentOutlined />
+          </template>
+          <template #title>八、实战项目</template>
+          <a-menu-item key="/stage8/soil-ph">
+            <template #icon>
+              <HeatMapOutlined />
+            </template>
+            32.土壤检测可视化
           </a-menu-item>
         </a-sub-menu>
       </a-menu>
@@ -132,12 +160,7 @@ function handleMenuClick({ key }: { key: string }) {
           </a-breadcrumb>
         </div>
         <div class="header-right">
-          <a
-            href="https://maplibre.org/maplibre-gl-js/docs/"
-            target="_blank"
-            class="header-action"
-            title="MapLibre 文档"
-          >
+          <a href="https://maplibre.org/maplibre-gl-js/docs/" target="_blank" class="header-action" title="MapLibre 文档">
             <GithubOutlined />
           </a>
           <span class="header-action" title="设置">
@@ -196,6 +219,10 @@ function handleMenuClick({ key }: { key: string }) {
 /* 右侧主区域 */
 .app-main {
   background: #f0f2f5;
+  display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
 
 /* 顶部导航栏 */
@@ -257,10 +284,12 @@ function handleMenuClick({ key }: { key: string }) {
   color: #1890ff;
 }
 
-/* 内容区域 */
+/* 内容区域 - flex:1 + height:0 确保高度正确传递给子组件 */
 .app-content {
   margin: 0;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
+  flex: 1;
+    height: 0;
 }
 </style>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { tiandituImgStyle } from '@/utils/mapStyles'
 import MapLegend from '@/components/MapLegend.vue'
 import MapFilter from '@/components/MapFilter.vue'
 import type { FilterState } from '@/components/MapFilter.vue'
@@ -38,7 +39,7 @@ const soilData = generateMockSoilData()
 
 /** 根据筛选条件过滤数据 */
 function getFilteredData() {
-  const filtered = soilData.features.filter(f => {
+  const filtered = soilData.features.filter((f: any) => {
     const p = f.properties
     if (currentFilter.value.city && p.city !== currentFilter.value.city) return false
     if (currentFilter.value.county && p.county !== currentFilter.value.county) return false
@@ -61,11 +62,11 @@ function generateLabelData() {
   const filtered = getFilteredData()
   return {
     type: 'FeatureCollection' as const,
-    features: filtered.features.map(f => {
+    features: filtered.features.map((f: any) => {
       /** 计算多边形中心 */
-      const coords = f.geometry.coordinates[0]
-      const lngSum = coords.reduce((sum, c) => sum + c[0], 0)
-      const latSum = coords.reduce((sum, c) => sum + c[1], 0)
+      const coords = f.geometry.coordinates[0] as number[][]
+      const lngSum = coords.reduce((sum: number, c: number[]) => sum + c[0], 0)
+      const latSum = coords.reduce((sum: number, c: number[]) => sum + c[1], 0)
       const center = [lngSum / coords.length, latSum / coords.length]
 
       return {
@@ -90,7 +91,7 @@ function updateMapData() {
   const filteredData = getFilteredData()
 
   /** 为每个要素添加颜色属性 */
-  const coloredFeatures = filteredData.features.map(f => ({
+  const coloredFeatures = filteredData.features.map((f: any) => ({
     ...f,
     properties: {
       ...f.properties,
@@ -118,8 +119,8 @@ function updateMapData() {
   /** 如果有筛选且有数据，飞行到数据范围 */
   if (coloredFeatures.length > 0 && (currentFilter.value.town || currentFilter.value.village)) {
     const bounds = new maplibregl.LngLatBounds()
-    coloredFeatures.forEach(f => {
-      f.geometry.coordinates[0].forEach(coord => {
+    coloredFeatures.forEach((f: any) => {
+      f.geometry.coordinates[0].forEach((coord: number[]) => {
         bounds.extend(coord as [number, number])
       })
     })
@@ -133,29 +134,7 @@ function initMap() {
 
   map = new maplibregl.Map({
     container: mapContainer.value,
-    style: {
-      version: 8,
-      sources: {
-        /** 卫星底图 - 使用 ESRI World Imagery */
-        'satellite': {
-          type: 'raster',
-          tiles: [
-            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-          ],
-          tileSize: 256,
-          attribution: '&copy; Esri &mdash; Sources: Esri, DigitalGlobe, GeoEye'
-        }
-      },
-      layers: [
-        {
-          id: 'satellite-layer',
-          type: 'raster',
-          source: 'satellite',
-          minzoom: 0,
-          maxzoom: 19
-        }
-      ]
-    },
+    style: tiandituImgStyle,
     center: [103.15, 24.92],
     zoom: 13,
     maxZoom: 18,
