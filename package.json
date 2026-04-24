@@ -1,12 +1,13 @@
 {
-  "name": "maplibre-code",
+  "name": "maplibre-base",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "build": "vue-tsc -b && vite build --emptyOutDir",
+    "preview": "vite preview",
+    "clean": "rimraf node_modules pnpm-lock.yaml && echo 依赖已清除"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",

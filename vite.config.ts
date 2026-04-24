@@ -5,7 +5,7 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig({
   /** 部署子路径，与 uniCloud 托管目录名一致 */
-  base: '/maplibre-code/',
+  base: '/maplibre-base/',
   plugins: [vue()],
   resolve: {
     alias: {

@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # 项目说明文件（不推送到远程仓库）
-README.md
+PLAN.md

@@ -12,8 +12,24 @@ import {
   CompassOutlined,
   ControlOutlined,
   InfoCircleOutlined,
-  ExperimentOutlined,
-  HeatMapOutlined
+  FormatPainterOutlined,
+  DatabaseOutlined,
+  NodeIndexOutlined,
+  BlockOutlined,
+  HighlightOutlined,
+  DashOutlined,
+  FontSizeOutlined,
+  AimOutlined,
+  FireOutlined,
+  BuildOutlined,
+  EnvironmentOutlined,
+  MessageOutlined,
+  SelectOutlined,
+  EditOutlined,
+  FunctionOutlined,
+  BgColorsOutlined,
+  FilterOutlined,
+  ToolOutlined
 } from '@ant-design/icons-vue'
 
 const router = useRouter()
@@ -125,19 +141,146 @@ function handleMenuClick({ key }: { key: string }) {
           </a-menu-item>
         </a-sub-menu>
 
-        <!-- 第八阶段：实战项目（已有） -->
-        <a-sub-menu key="/stage8">
+        <!-- 第二阶段：样式与数据源 -->
+        <a-sub-menu key="/stage2">
           <template #icon>
-            <ExperimentOutlined />
+            <FormatPainterOutlined />
           </template>
-          <template #title>八、实战项目</template>
-          <a-menu-item key="/stage8/soil-ph">
+          <template #title>二、样式与数据源</template>
+          <a-menu-item key="/stage2/lesson05">
             <template #icon>
-              <HeatMapOutlined />
+              <FormatPainterOutlined />
             </template>
-            32.土壤检测可视化
+            05.地图样式详解
+          </a-menu-item>
+          <a-menu-item key="/stage2/lesson06">
+            <template #icon>
+              <DatabaseOutlined />
+            </template>
+            06.数据源Sources
+          </a-menu-item>
+          <a-menu-item key="/stage2/lesson07">
+            <template #icon>
+              <NodeIndexOutlined />
+            </template>
+            07.GeoJSON数据实战
+          </a-menu-item>
+          <a-menu-item key="/stage2/lesson08">
+            <template #icon>
+              <BlockOutlined />
+            </template>
+            08.矢量瓦片与栅格瓦片
           </a-menu-item>
         </a-sub-menu>
+
+        <!-- 第三阶段：图层类型精讲 -->
+        <a-sub-menu key="/stage3">
+          <template #icon>
+            <HighlightOutlined />
+          </template>
+          <template #title>三、图层类型精讲</template>
+          <a-menu-item key="/stage3/lesson09">
+            <template #icon>
+              <HighlightOutlined />
+            </template>
+            09.Fill填充图层
+          </a-menu-item>
+          <a-menu-item key="/stage3/lesson10">
+            <template #icon>
+              <DashOutlined />
+            </template>
+            10.Line线图层
+          </a-menu-item>
+          <a-menu-item key="/stage3/lesson11">
+            <template #icon>
+              <FontSizeOutlined />
+            </template>
+            11.Symbol符号图层
+          </a-menu-item>
+          <a-menu-item key="/stage3/lesson12">
+            <template #icon>
+              <AimOutlined />
+            </template>
+            12.Circle圆点图层
+          </a-menu-item>
+          <a-menu-item key="/stage3/lesson13">
+            <template #icon>
+              <FireOutlined />
+            </template>
+            13.Heatmap热力图层
+          </a-menu-item>
+          <a-menu-item key="/stage3/lesson14">
+            <template #icon>
+              <BuildOutlined />
+            </template>
+            14.Fill-extrusion 3D建筑
+          </a-menu-item>
+        </a-sub-menu>
+
+        <!-- 第四阶段：交互与覆盖物 -->
+        <a-sub-menu key="/stage4">
+          <template #icon>
+            <SelectOutlined />
+          </template>
+          <template #title>四、交互与覆盖物</template>
+          <a-menu-item key="/stage4/lesson15">
+            <template #icon>
+              <EnvironmentOutlined />
+            </template>
+            15.Marker标记点
+          </a-menu-item>
+          <a-menu-item key="/stage4/lesson16">
+            <template #icon>
+              <MessageOutlined />
+            </template>
+            16.Popup弹窗
+          </a-menu-item>
+          <a-menu-item key="/stage4/lesson17">
+            <template #icon>
+              <SelectOutlined />
+            </template>
+            17.要素交互
+          </a-menu-item>
+          <a-menu-item key="/stage4/lesson18">
+            <template #icon>
+              <EditOutlined />
+            </template>
+            18.绘制与测量
+          </a-menu-item>
+        </a-sub-menu>
+
+        <!-- 第五阶段：表达式与高级样式 -->
+        <a-sub-menu key="/stage5">
+          <template #icon>
+            <FunctionOutlined />
+          </template>
+          <template #title>五、表达式与高级样式</template>
+          <a-menu-item key="/stage5/lesson19">
+            <template #icon>
+              <FunctionOutlined />
+            </template>
+            19.表达式系统入门
+          </a-menu-item>
+          <a-menu-item key="/stage5/lesson20">
+            <template #icon>
+              <BgColorsOutlined />
+            </template>
+            20.数据驱动样式
+          </a-menu-item>
+          <a-menu-item key="/stage5/lesson21">
+            <template #icon>
+              <FilterOutlined />
+            </template>
+            21.图层过滤Filter
+          </a-menu-item>
+          <a-menu-item key="/stage5/lesson22">
+            <template #icon>
+              <ToolOutlined />
+            </template>
+            22.运行时样式修改
+          </a-menu-item>
+        </a-sub-menu>
+
       </a-menu>
     </a-layout-sider>
 
