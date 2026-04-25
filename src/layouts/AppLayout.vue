@@ -303,8 +303,17 @@ function handleMenuClick({ key }: { key: string }) {
           </a-breadcrumb>
         </div>
         <div class="header-right">
-          <a href="https://maplibre.org/maplibre-gl-js/docs/" target="_blank" class="header-action" title="MapLibre 文档">
+          <strong>[个人微信: 1576554007 欢迎一起学习交流]</strong>
+          欢迎给仓库点一个 Star,让更多同学找到这份资料
+          <a href="https://github.com/xwdeng001/maplibre-base.git" target="_blank"
+            class="header-action header-link-action" title="Github 仓库">
             <GithubOutlined />
+            <span class="header-action-label">GitHub获取本项目源码</span>
+          </a>
+          <a href="https://gitee.com/JuliusDeng/maplibre-base.git" target="_blank"
+            class="header-action header-link-action" title="Gitee 仓库">
+            <span class="header-text-icon">G</span>
+            <span class="header-action-label">码云获取本项目源码</span>
           </a>
           <span class="header-action" title="设置">
             <SettingOutlined />
@@ -422,6 +431,22 @@ function handleMenuClick({ key }: { key: string }) {
   transition: all 0.3s;
 }
 
+.header-link-action {
+  width: auto;
+  padding: 0 10px;
+  gap: 6px;
+}
+
+.header-action-label {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.header-text-icon {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
 .header-action:hover {
   background: #f0f2f5;
   color: #1890ff;

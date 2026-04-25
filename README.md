@@ -1,5 +1,8 @@
 # base预览地址：https://env-00jy66xyyn4y-static.normal.cloudstatic.cn/maplibre-base/index.html
 # pro预览地址：https://env-00jy66xyyn4y-static.normal.cloudstatic.cn/maplibre-pro/index.html
+# base仓库地址：
+- gitee：https://gitee.com/JuliusDeng/maplibre-base.git
+- github：https://github.com/xwdeng001/maplibre-base.git
 
 ## 技术栈
 
