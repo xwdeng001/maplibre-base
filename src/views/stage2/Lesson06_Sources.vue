@@ -7,6 +7,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { tiandituVecStyle } from '@/utils/mapStyles'
+import overlayImageUrl from '@/assets/7.jpg'
 
 const mapContainer = ref<HTMLElement>()
 let map: maplibregl.Map | null = null
@@ -33,8 +34,28 @@ const sources = ref([
     type: 'geojson',
     desc: '长安街路线',
     enabled: false
+  },
+  {
+    key: 'image-overlay',
+    name: 'Image 图片源',
+    type: 'image',
+    desc: '本地图片覆盖在地理范围',
+    enabled: false
   }
 ])
+
+/** image 源四角坐标 [左上, 右上, 右下, 左下] — 天安门广场附近 */
+const imageOverlayCoordinates: [
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number]
+] = [
+    [116.385, 39.915],
+    [116.405, 39.915],
+    [116.405, 39.898],
+    [116.385, 39.898]
+  ]
 
 /** 示例 GeoJSON 数据 — 点 */
 const pointsData: GeoJSON.FeatureCollection = {
@@ -185,12 +206,44 @@ function removeLineSource() {
   if (map.getSource('geojson-line')) map.removeSource('geojson-line')
 }
 
+/** 添加 image 图片数据源 + 图层 */
+function addImageSource() {
+  if (!map || map.getSource('image-overlay')) return
+  map.addSource('image-overlay', {
+    type: 'image',
+    url: overlayImageUrl,
+    coordinates: imageOverlayCoordinates
+  })
+  map.addLayer({
+    id: 'image-overlay-layer',
+    type: 'raster',
+    source: 'image-overlay',
+    paint: {
+      'raster-opacity': 0.92,
+      'raster-fade-duration': 0
+    }
+  })
+  map.flyTo({
+    center: [116.395, 39.9065],
+    zoom: 13,
+    duration: 800
+  })
+}
+
+/** 移除 image 图片数据源 + 图层 */
+function removeImageSource() {
+  if (!map) return
+  if (map.getLayer('image-overlay-layer')) map.removeLayer('image-overlay-layer')
+  if (map.getSource('image-overlay')) map.removeSource('image-overlay')
+}
+
 /** 切换数据源 */
 function toggleSource(item: typeof sources.value[0]) {
   const actions: Record<string, { add: () => void; remove: () => void }> = {
     'geojson-points': { add: addPointSource, remove: removePointSource },
     'geojson-polygon': { add: addPolygonSource, remove: removePolygonSource },
-    'geojson-line': { add: addLineSource, remove: removeLineSource }
+    'geojson-line': { add: addLineSource, remove: removeLineSource },
+    'image-overlay': { add: addImageSource, remove: removeImageSource }
   }
   const action = actions[item.key]
   if (action) {
@@ -200,7 +253,7 @@ function toggleSource(item: typeof sources.value[0]) {
 
 /** 数据源类型说明 */
 const sourceTypes = [
-  { type: 'vector', desc: '矢量瓦片（PBF），客户端渲染', color: '#1890ff' },
+  { type: 'vector', desc: '矢量瓦片 / MVT（PBF），客户端渲染', color: '#1890ff' },
   { type: 'raster', desc: '栅格瓦片（PNG/JPEG），服务端渲染', color: '#52c41a' },
   { type: 'raster-dem', desc: '高程瓦片，用于 3D 地形', color: '#722ed1' },
   { type: 'geojson', desc: 'GeoJSON 对象，最灵活', color: '#fa8c16' },
@@ -243,17 +296,35 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
+      <a-card size="small" title="MVT 与 vector" style="margin-top: 10px">
+        <div class="mvt-note">
+          <p><b>MVT</b>（Mapbox Vector Tile）是矢量瓦片的格式规范，文件多为 <code>.pbf</code> / <code>.mvt</code>。</p>
+          <p>API 里没有 <code>type: 'mvt'</code>，加载 MVT 请用 <code>type: 'vector'</code>，图层需指定 <code>source-layer</code>。</p>
+        </div>
+      </a-card>
+
       <a-divider style="margin: 12px 0" />
 
-      <!-- GeoJSON 数据源演示 -->
-      <div class="section-title">GeoJSON 数据源演示</div>
+      <!-- 数据源演示 -->
+      <div class="section-title">数据源演示</div>
       <div v-for="item in sources" :key="item.key" class="source-row">
         <div class="source-info">
-          <div class="source-name">{{ item.name }}</div>
+          <div class="source-info-head">
+            <span class="source-name">{{ item.name }}</span>
+            <a-tag v-if="item.type === 'image'" color="magenta"
+              style="font-size: 10px; line-height: 18px; margin: 0">image</a-tag>
+          </div>
           <div class="source-desc">{{ item.desc }}</div>
         </div>
         <a-switch v-model:checked="item.enabled" size="small" @change="toggleSource(item)" />
       </div>
+
+      <a-card size="small" title="Image 源：7.jpg" style="margin-top: 12px">
+        <img :src="overlayImageUrl" alt="图片源示例" class="overlay-preview" />
+        <p class="image-coords-hint">
+          打开上方「Image 图片源」后，图片按四角坐标贴到地图上（左上 → 右上 → 右下 → 左下）。
+        </p>
+      </a-card>
 
       <a-divider style="margin: 12px 0" />
 
@@ -332,6 +403,27 @@ onBeforeUnmount(() => {
   color: #888;
 }
 
+.mvt-note {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.65;
+}
+
+.mvt-note p {
+  margin: 0 0 6px;
+}
+
+.mvt-note p:last-child {
+  margin-bottom: 0;
+}
+
+.mvt-note code {
+  font-size: 10px;
+  background: #f5f5f5;
+  padding: 1px 4px;
+  border-radius: 2px;
+  color: #d4380d;
+}
 .source-row {
   display: flex;
   align-items: center;
@@ -340,12 +432,30 @@ onBeforeUnmount(() => {
   border-bottom: 1px solid #f0f0f0;
 }
 
+.source-info-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 .source-name {
   font-size: 13px;
   font-weight: 500;
   color: #333;
 }
 
+.overlay-preview {
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+  border: 1px solid #f0f0f0;
+}
+
+.image-coords-hint {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: #888;
+  line-height: 1.5;
+}
 .source-desc {
   font-size: 11px;
   color: #999;
