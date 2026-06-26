@@ -6,7 +6,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { tiandituVecStyle } from '@/utils/mapStyles'
+import { tiandituVecStyle, tiandituImgStyle } from '@/utils/mapStyles'
 
 const mapContainer = ref<HTMLElement>()
 let map: maplibregl.Map | null = null
@@ -105,7 +105,7 @@ function initMap() {
 
   map = new maplibregl.Map({
     container: mapContainer.value,
-    style: tiandituVecStyle,
+    style: tiandituImgStyle,
     center: [116.39, 39.91],
     zoom: 5
   })
@@ -123,14 +123,27 @@ function initMap() {
     const c = map!.getCenter()
     addLog(`moveend → [${c.lng.toFixed(4)}, ${c.lat.toFixed(4)}]`)
   })
+
+
+
+
   map.on('load', () => {
     addLog('✅ 地图加载完成 (load)')
+  })
+
+  map.on('style.load', () => {
+    addLog('✅ 地图样式加载完成 (style.load)')
   })
 }
 
 onMounted(() => initMap())
 onBeforeUnmount(() => {
-  if (map) { map.remove(); map = null }
+  // if (map) { map.remove(); map = null }
+  if (map) {
+    map.remove() // 销毁地图，释放内存
+    map = null
+  }
+
 })
 </script>
 

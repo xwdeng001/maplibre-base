@@ -111,7 +111,7 @@ function initMap() {
   // 手动添加自定义归属
   const attribution = new maplibregl.AttributionControl({
     compact: true,                              // 折叠模式
-    customAttribution: '© JuliusDeng的地图项目'          // 自定义归属文本
+    customAttribution: '© JuliusDeng的地图项目666'          // 自定义归属文本
   })
 
   map.addControl(attribution, 'bottom-right')

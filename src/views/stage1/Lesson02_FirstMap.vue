@@ -2,6 +2,7 @@
 /**
  * 第02课：环境搭建与第一张地图
  * 展示 MapLibre Map 构造函数核心参数及其效果
+ * 知识点文档：docs/lessons/02-第一张地图-Map构造参数.md
  */
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import maplibregl from 'maplibre-gl'
@@ -37,7 +38,7 @@ function initMap() {
     minZoom: 2
   })
 
-  /** 同步地图状态到控制面板 */
+  /** 同步地图状态到控制面板（toFixed 返回字符串，用一元 + 转 number；勿用 += 会累加坐标） */
   map.on('move', () => {
     if (!map) return
     const c = map.getCenter()
